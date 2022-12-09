@@ -40,7 +40,7 @@ resource "google_container_cluster" "cluster" {
   resource_labels    = var.md_metadata.default_tags
   location           = var.subnetwork.specs.gcp.region
   min_master_version = local.latest_master_version
-  enable_autopilot = true
+  enable_autopilot   = true
 
   node_config {
     labels = var.md_metadata.default_tags
@@ -55,9 +55,9 @@ resource "google_container_cluster" "cluster" {
   }
 
   # NETWORKING
-  network                     = var.subnetwork.data.infrastructure.gcp_global_network_grn
-  subnetwork                  = var.subnetwork.data.infrastructure.grn
-  networking_mode             = "VPC_NATIVE"
+  network         = var.subnetwork.data.infrastructure.gcp_global_network_grn
+  subnetwork      = var.subnetwork.data.infrastructure.grn
+  networking_mode = "VPC_NATIVE"
 
   //
 

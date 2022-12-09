@@ -52,8 +52,68 @@ Form input parameters for configuring a bundle for deployment.
 <summary>View</summary>
 
 <!-- PARAMS:START -->
+## Properties
 
-**Params coming soon**
+- **`cluster_networking`** *(object)*: Configure the network configuration of the cluster.
+  - **`cluster_ipv4_cidr_block`** *(string)*: CIDR block to use for kubernetes pods. Set to /netmask (e.g. /16) to have a range chosen with a specific netmask. Set to a CIDR notation (e.g. 10.96.0.0/14) from the RFC-1918 private networks (e.g. 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) to pick a specific range to use. Default: `/16`.
+  - **`master_ipv4_cidr_block`** *(string)*: CIDR block to use for kubernetes control plane. The mask for this must be exactly /28. Must be from the RFC-1918 private networks (e.g. 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16), and should not conflict with other ranges in use. It is recommended to use consecutive /28 blocks from the 172.16.0.0/16 range for all your GKE clusters (172.16.0.0/28 for the first cluster, 172.16.0.16/28 for the second, etc.). Default: `172.16.0.0/28`.
+
+    Examples:
+    ```json
+    "10.100.0.0/16"
+    ```
+
+    ```json
+    "192.24.12.0/22"
+    ```
+
+  - **`services_ipv4_cidr_block`** *(string)*: CIDR block to use for kubernetes services. Set to /netmask (e.g. /20) to have a range chosen with a specific netmask. Set to a CIDR notation (e.g. 10.96.0.0/14) from the RFC-1918 private networks (e.g. 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) to pick a specific range to use. Default: `/20`.
+- **`core_services`** *(object)*: Configure core services in Kubernetes for Massdriver to manage.
+  - **`cloud_dns_managed_zones`** *(array)*: Select any Cloud DNS Managed Zones associated with this cluster to allow the cluster to automatically manage DNS records and SSL certificates. Default: `[]`.
+    - **Items** *(string)*
+  - **`enable_ingress`** *(boolean)*: Enabling this will create an nginx ingress controller in the cluster, allowing internet traffic to flow into web accessible services within the cluster. Default: `False`.
+- **`k8s_version`** *(string)*: The version of Kubernetes to run. Must be one of: `['1.23', '1.22', '1.21', '1.20', '1.19']`. Default: `1.22`.
+- **`observability`** *(object)*: Configure logging and metrics collection and delivery for your entire cluster.
+  - **`logging`** *(object)*: Configure logging for your cluster.
+    - **`destination`** *(string)*: Where to send logs. Default: `disabled`.
+      - **One of**
+        - OpenSearch (in cluster)
+        - Disabled
+## Examples
+
+  ```json
+  {
+      "__name": "Development",
+      "node_groups": [
+          {
+              "machine_type": "e2-standard-2",
+              "max_size": 5,
+              "min_size": 1,
+              "name": "small-pool"
+          }
+      ]
+  }
+  ```
+
+  ```json
+  {
+      "__name": "Production",
+      "node_groups": [
+          {
+              "machine_type": "e2-standard-16",
+              "max_size": 20,
+              "min_size": 1,
+              "name": "big-pool-general"
+          },
+          {
+              "machine_type": "e2-highmem-16",
+              "max_size": 6,
+              "min_size": 1,
+              "name": "big-pool-high-mem"
+          }
+      ]
+  }
+  ```
 
 <!-- PARAMS:END -->
 
@@ -67,8 +127,184 @@ Connections from other bundles that this bundle depends on.
 <summary>View</summary>
 
 <!-- CONNECTIONS:START -->
+## Properties
 
-**Connections coming soon**
+- **`gcp_authentication`** *(object)*: GCP Service Account. Cannot contain additional properties.
+  - **`data`** *(object)*
+    - **`auth_provider_x509_cert_url`** *(string)*: Auth Provider x509 Certificate URL. Default: `https://www.googleapis.com/oauth2/v1/certs`.
+
+      Examples:
+      ```json
+      "https://example.com/some/path"
+      ```
+
+      ```json
+      "https://massdriver.cloud"
+      ```
+
+    - **`auth_uri`** *(string)*: Auth URI. Default: `https://accounts.google.com/o/oauth2/auth`.
+
+      Examples:
+      ```json
+      "https://example.com/some/path"
+      ```
+
+      ```json
+      "https://massdriver.cloud"
+      ```
+
+    - **`client_email`** *(string)*: Service Account Email.
+
+      Examples:
+      ```json
+      "jimmy@massdriver.cloud"
+      ```
+
+      ```json
+      "service-account-y@gmail.com"
+      ```
+
+    - **`client_id`** *(string)*: .
+    - **`client_x509_cert_url`** *(string)*: Client x509 Certificate URL.
+
+      Examples:
+      ```json
+      "https://example.com/some/path"
+      ```
+
+      ```json
+      "https://massdriver.cloud"
+      ```
+
+    - **`private_key`** *(string)*: .
+    - **`private_key_id`** *(string)*: .
+    - **`project_id`** *(string)*: .
+    - **`token_uri`** *(string)*: Token URI. Default: `https://oauth2.googleapis.com/token`.
+
+      Examples:
+      ```json
+      "https://example.com/some/path"
+      ```
+
+      ```json
+      "https://massdriver.cloud"
+      ```
+
+    - **`type`** *(string)*: . Default: `service_account`.
+  - **`specs`** *(object)*
+    - **`gcp`** *(object)*: .
+      - **`project`** *(string)*
+      - **`region`** *(string)*: GCP region. Must be one of: `['us-east1', 'us-east4', 'us-west1', 'us-west2', 'us-west3', 'us-west4', 'us-central1']`.
+
+        Examples:
+        ```json
+        "us-west2"
+        ```
+
+- **`subnetwork`** *(object)*: A region-bound network for deploying GCP resources. Cannot contain additional properties.
+  - **`data`** *(object)*
+    - **`infrastructure`** *(object)*
+      - **`cidr`** *(string)*
+
+        Examples:
+        ```json
+        "10.100.0.0/16"
+        ```
+
+        ```json
+        "192.24.12.0/22"
+        ```
+
+      - **`gcp_global_network_grn`** *(string)*: GCP Resource Name (GRN).
+
+        Examples:
+        ```json
+        "projects/my-project/global/networks/my-global-network"
+        ```
+
+        ```json
+        "projects/my-project/regions/us-west2/subnetworks/my-subnetwork"
+        ```
+
+        ```json
+        "projects/my-project/topics/my-pubsub-topic"
+        ```
+
+        ```json
+        "projects/my-project/subscriptions/my-pubsub-subscription"
+        ```
+
+        ```json
+        "projects/my-project/locations/us-west2/instances/my-redis-instance"
+        ```
+
+        ```json
+        "projects/my-project/locations/us-west2/clusters/my-gke-cluster"
+        ```
+
+      - **`grn`** *(string)*: GCP Resource Name (GRN).
+
+        Examples:
+        ```json
+        "projects/my-project/global/networks/my-global-network"
+        ```
+
+        ```json
+        "projects/my-project/regions/us-west2/subnetworks/my-subnetwork"
+        ```
+
+        ```json
+        "projects/my-project/topics/my-pubsub-topic"
+        ```
+
+        ```json
+        "projects/my-project/subscriptions/my-pubsub-subscription"
+        ```
+
+        ```json
+        "projects/my-project/locations/us-west2/instances/my-redis-instance"
+        ```
+
+        ```json
+        "projects/my-project/locations/us-west2/clusters/my-gke-cluster"
+        ```
+
+      - **`vpc_access_connector`** *(string)*: GCP Resource Name (GRN).
+
+        Examples:
+        ```json
+        "projects/my-project/global/networks/my-global-network"
+        ```
+
+        ```json
+        "projects/my-project/regions/us-west2/subnetworks/my-subnetwork"
+        ```
+
+        ```json
+        "projects/my-project/topics/my-pubsub-topic"
+        ```
+
+        ```json
+        "projects/my-project/subscriptions/my-pubsub-subscription"
+        ```
+
+        ```json
+        "projects/my-project/locations/us-west2/instances/my-redis-instance"
+        ```
+
+        ```json
+        "projects/my-project/locations/us-west2/clusters/my-gke-cluster"
+        ```
+
+  - **`specs`** *(object)*
+    - **`gcp`** *(object)*: .
+      - **`project`** *(string)*
+      - **`region`** *(string)*: GCP region. Must be one of: `['us-east1', 'us-east4', 'us-west1', 'us-west2', 'us-west3', 'us-west4', 'us-central1']`.
+
+        Examples:
+        ```json
+        "us-west2"
+        ```
 
 <!-- CONNECTIONS:END -->
 
@@ -82,9 +318,83 @@ Resources created by this bundle that can be connected to other bundles.
 <summary>View</summary>
 
 <!-- ARTIFACTS:START -->
+## Properties
 
-**Artifacts coming soon**
+- **`kubernetes_cluster`** *(object)*: Kubernetes cluster authentication and cloud-specific configuration. Cannot contain additional properties.
+  - **`data`** *(object)*
+    - **`authentication`** *(object)*
+      - **`cluster`** *(object)*
+        - **`certificate-authority-data`** *(string)*
+        - **`server`** *(string)*
+      - **`user`** *(object)*
+        - **`token`** *(string)*
+    - **`infrastructure`** *(object)*: Cloud specific Kubernetes configuration data.
+      - **One of**
+        - AWS EKS infrastructure config*object*: . Cannot contain additional properties.
+          - **`arn`** *(string)*: Amazon Resource Name.
 
+            Examples:
+            ```json
+            "arn:aws:rds::ACCOUNT_NUMBER:db/prod"
+            ```
+
+            ```json
+            "arn:aws:ec2::ACCOUNT_NUMBER:vpc/vpc-foo"
+            ```
+
+          - **`oidc_issuer_url`** *(string)*: An HTTPS endpoint URL.
+
+            Examples:
+            ```json
+            "https://example.com/some/path"
+            ```
+
+            ```json
+            "https://massdriver.cloud"
+            ```
+
+        - Azure Infrastructure Resource ID*object*: Minimal Azure Infrastructure Config. Cannot contain additional properties.
+          - **`ari`** *(string)*: Azure Resource ID.
+
+            Examples:
+            ```json
+            "/subscriptions/12345678-1234-1234-abcd-1234567890ab/resourceGroups/resource-group-name/providers/Microsoft.Network/virtualNetworks/network-name"
+            ```
+
+        - GCP Infrastructure GRN*object*: Minimal GCP Infrastructure Config. Cannot contain additional properties.
+          - **`grn`** *(string)*: GCP Resource Name (GRN).
+
+            Examples:
+            ```json
+            "projects/my-project/global/networks/my-global-network"
+            ```
+
+            ```json
+            "projects/my-project/regions/us-west2/subnetworks/my-subnetwork"
+            ```
+
+            ```json
+            "projects/my-project/topics/my-pubsub-topic"
+            ```
+
+            ```json
+            "projects/my-project/subscriptions/my-pubsub-subscription"
+            ```
+
+            ```json
+            "projects/my-project/locations/us-west2/instances/my-redis-instance"
+            ```
+
+            ```json
+            "projects/my-project/locations/us-west2/clusters/my-gke-cluster"
+            ```
+
+  - **`specs`** *(object)*
+    - **`kubernetes`** *(object)*: Kubernetes distribution and version specifications.
+      - **`cloud`** *(string)*: Must be one of: `['aws', 'gcp', 'azure']`.
+      - **`distribution`** *(string)*: Must be one of: `['eks', 'gke', 'aks']`.
+      - **`platform_version`** *(string)*
+      - **`version`** *(string)*
 <!-- ARTIFACTS:END -->
 
 </details>
