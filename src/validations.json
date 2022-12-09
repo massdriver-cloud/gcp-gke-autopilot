@@ -1,0 +1,5 @@
+{
+    "do_not_delete": [
+        "google_container_cluster.cluster"
+    ]
+}
