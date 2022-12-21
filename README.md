@@ -194,11 +194,35 @@ Connections from other bundles that this bundle depends on.
   - **`specs`** *(object)*
     - **`gcp`** *(object)*: .
       - **`project`** *(string)*
-      - **`region`** *(string)*: GCP region. Must be one of: `['us-east1', 'us-east4', 'us-west1', 'us-west2', 'us-west3', 'us-west4', 'us-central1']`.
+      - **`region`** *(string)*: The GCP region to provision resources in.
 
         Examples:
         ```json
+        "us-east1"
+        ```
+
+        ```json
+        "us-east4"
+        ```
+
+        ```json
+        "us-west1"
+        ```
+
+        ```json
         "us-west2"
+        ```
+
+        ```json
+        "us-west3"
+        ```
+
+        ```json
+        "us-west4"
+        ```
+
+        ```json
+        "us-central1"
         ```
 
 - **`subnetwork`** *(object)*: A region-bound network for deploying GCP resources. Cannot contain additional properties.
@@ -299,11 +323,35 @@ Connections from other bundles that this bundle depends on.
   - **`specs`** *(object)*
     - **`gcp`** *(object)*: .
       - **`project`** *(string)*
-      - **`region`** *(string)*: GCP region. Must be one of: `['us-east1', 'us-east4', 'us-west1', 'us-west2', 'us-west3', 'us-west4', 'us-central1']`.
+      - **`region`** *(string)*: The GCP region to provision resources in.
 
         Examples:
         ```json
+        "us-east1"
+        ```
+
+        ```json
+        "us-east4"
+        ```
+
+        ```json
+        "us-west1"
+        ```
+
+        ```json
         "us-west2"
+        ```
+
+        ```json
+        "us-west3"
+        ```
+
+        ```json
+        "us-west4"
+        ```
+
+        ```json
+        "us-central1"
         ```
 
 <!-- CONNECTIONS:END -->
