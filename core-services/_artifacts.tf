@@ -1,4 +1,3 @@
-
 locals {
   data_infrastructure = {
     grn = data.google_container_cluster.cluster.id
@@ -10,7 +9,7 @@ locals {
       certificate-authority-data = data.google_container_cluster.cluster.master_auth.0.cluster_ca_certificate
     }
     user = {
-      token = lookup(data.kubernetes_secret.massdriver-cloud-provisioner_service-account_secret.data, "token")
+      token = module.core_services.kubernetes_token
     }
   }
 
