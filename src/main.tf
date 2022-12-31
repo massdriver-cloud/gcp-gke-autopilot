@@ -6,22 +6,6 @@ locals {
   cluster_network_tag = "gke-${local.cluster_name}"
 }
 
-# data "google_compute_network" "main" {
-#   name = "default-us-east1"
-# }
-
-# data "google_compute_subnetwork" "lookup" {
-#   for_each = toset(data.google_compute_network.main.subnetworks_self_links)
-#   name   = "default-us-east1"
-#   region = "us-east1"
-# }
-
-# resource "utility_available_cidr" "cidr" {
-#   from_cidrs = data.google_compute_network.main.gateway_ipv4
-#   used_cidrs = flatten([for subnet in data.google_compute_subnetwork.lookup : subnet.gateway_address])
-#   mask       = 16
-# }
-
 # This gives us the latest version available in the current region
 # that matches the version prefix: [1.21., 1.22., etc..]
 data "google_container_engine_versions" "versions_in_region" {
@@ -42,24 +26,10 @@ resource "google_container_cluster" "cluster" {
   min_master_version = local.latest_master_version
   enable_autopilot   = true
 
-  node_config {
-    labels = var.md_metadata.default_tags
-    # Conditionally allow or deny requests based on the tag.
-    tags = [local.cluster_network_tag]
-    workload_metadata_config {
-      mode = "GKE_METADATA"
-    }
-    shielded_instance_config {
-      enable_secure_boot = true
-    }
-  }
-
   # NETWORKING
   network         = var.subnetwork.data.infrastructure.gcp_global_network_grn
   subnetwork      = var.subnetwork.data.infrastructure.grn
   networking_mode = "VPC_NATIVE"
-
-  //
 
   ip_allocation_policy {
     cluster_ipv4_cidr_block  = var.cluster_networking.cluster_ipv4_cidr_block
@@ -76,7 +46,8 @@ resource "google_container_cluster" "cluster" {
   }
 
   monitoring_config {
-    enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
+    #   enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
+    enable_components = ["SYSTEM_COMPONENTS"]
   }
 
   # CLUSTER ADD-ONS
@@ -86,6 +57,14 @@ resource "google_container_cluster" "cluster" {
     }
     gce_persistent_disk_csi_driver_config {
       enabled = true
+    }
+  }
+
+  # add network tags so firewall rules can be set for
+  # admision controller webhooks, etc.
+  node_pool_auto_config {
+    network_tags {
+      tags = [local.cluster_network_tag]
     }
   }
 
