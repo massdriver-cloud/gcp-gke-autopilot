@@ -16,21 +16,17 @@ steps:
 params:
   examples:
     - __name: Development
-      node_groups:
-        - name: small-pool
-          machine_type: e2-standard-2
-          min_size: 1
-          max_size: 5
+      core_services:
+        enable_ingress: false
+      observability:
+        logging:
+          destination: "disabled"
     - __name: Production
-      node_groups:
-        - name: big-pool-general
-          machine_type: e2-standard-16
-          min_size: 1
-          max_size: 20
-        - name: big-pool-high-mem
-          machine_type: e2-highmem-16
-          min_size: 1
-          max_size: 6
+      core_services:
+        enable_ingress: true
+      observability:
+        logging:
+          destination: "opensearch"
   required:
     - k8s_version
     - cluster_networking
@@ -97,8 +93,9 @@ params:
       type: string
       title: Kubernetes Version
       description: The version of Kubernetes to run
-      default: "1.22"
+      default: "1.23"
       enum:
+        - "1.24"
         - "1.23"
         - "1.22"
         - "1.21"
@@ -177,7 +174,7 @@ artifacts:
 ui:
   items:
     ui:order:
-      - cluster_configuration
+      - k8s_version
       - cluster_networking
       - core_services
       - observability
@@ -186,6 +183,7 @@ ui:
     ui:order:
       - enable_ingress
       - cloud_dns_managed_zones
+      - "*"
     cloud_dns_managed_zones:
       items:
         ui:field: dnsZonesDropdown

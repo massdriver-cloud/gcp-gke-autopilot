@@ -72,7 +72,7 @@ Form input parameters for configuring a bundle for deployment.
   - **`cloud_dns_managed_zones`** *(array)*: Select any Cloud DNS Managed Zones associated with this cluster to allow the cluster to automatically manage DNS records and SSL certificates. Default: `[]`.
     - **Items** *(string)*
   - **`enable_ingress`** *(boolean)*: Enabling this will create an nginx ingress controller in the cluster, allowing internet traffic to flow into web accessible services within the cluster. Default: `False`.
-- **`k8s_version`** *(string)*: The version of Kubernetes to run. Must be one of: `['1.23', '1.22', '1.21', '1.20', '1.19']`. Default: `1.22`.
+- **`k8s_version`** *(string)*: The version of Kubernetes to run. Must be one of: `['1.24', '1.23', '1.22', '1.21', '1.20', '1.19']`. Default: `1.23`.
 - **`observability`** *(object)*: Configure logging and metrics collection and delivery for your entire cluster.
   - **`logging`** *(object)*: Configure logging for your cluster.
     - **`destination`** *(string)*: Where to send logs. Default: `disabled`.
@@ -84,34 +84,28 @@ Form input parameters for configuring a bundle for deployment.
   ```json
   {
       "__name": "Development",
-      "node_groups": [
-          {
-              "machine_type": "e2-standard-2",
-              "max_size": 5,
-              "min_size": 1,
-              "name": "small-pool"
+      "core_services": {
+          "enable_ingress": false
+      },
+      "observability": {
+          "logging": {
+              "destination": "disabled"
           }
-      ]
+      }
   }
   ```
 
   ```json
   {
       "__name": "Production",
-      "node_groups": [
-          {
-              "machine_type": "e2-standard-16",
-              "max_size": 20,
-              "min_size": 1,
-              "name": "big-pool-general"
-          },
-          {
-              "machine_type": "e2-highmem-16",
-              "max_size": 6,
-              "min_size": 1,
-              "name": "big-pool-high-mem"
+      "core_services": {
+          "enable_ingress": true
+      },
+      "observability": {
+          "logging": {
+              "destination": "opensearch"
           }
-      ]
+      }
   }
   ```
 
