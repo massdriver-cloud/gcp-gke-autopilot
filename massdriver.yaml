@@ -1,7 +1,7 @@
 schema: draft-07
-name: gcp-gke-cluster
+name: gcp-gke-autopilot-cluster
 description: "GKE is a managed Kubernetes service in GCP that implements the full Kubernetes API, 4-way autoscaling, release channels and multi-cluster support."
-source_url: github.com/massdriver-cloud/gcp-gke-cluster
+source_url: github.com/massdriver-cloud/gcp-gke-autopilot
 access: public
 type: infrastructure
 
