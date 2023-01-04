@@ -15,7 +15,7 @@ locals {
 
   specs_kubernetes = {
     cloud            = "gcp"
-    distribution     = "gke-autopilot"
+    distribution     = "gke"
     version          = split("-", data.google_container_cluster.cluster.master_version)[0]
     platform_version = split("-", data.google_container_cluster.cluster.master_version)[1]
   }
