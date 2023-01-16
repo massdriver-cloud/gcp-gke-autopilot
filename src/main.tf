@@ -6,7 +6,7 @@ locals {
   cluster_network_tag = "gke-${local.cluster_name}"
 
   workload_monitoring_supported = length(regexall("1.2[0-3].[1-9]+", local.latest_master_version)) > 0
-  monitoring_componentes        = local.workload_monitoring_supported ? ["SYSTEM_COMPONENTS", "WORKLOADS"] : ["SYSTEM_COMPONENTS"]
+  monitoring_components         = ["SYSTEM_COMPONENTS"]
 }
 
 # This gives us the latest version available in the current region
@@ -49,7 +49,7 @@ resource "google_container_cluster" "cluster" {
   }
 
   monitoring_config {
-    enable_components = local.monitoring_componentes
+    enable_components = local.monitoring_components
   }
 
   # CLUSTER ADD-ONS

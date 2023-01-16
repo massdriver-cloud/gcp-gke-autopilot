@@ -18,77 +18,14 @@ params:
     - __name: Development
       core_services:
         enable_ingress: false
-      observability:
-        logging:
-          destination: "disabled"
     - __name: Production
       core_services:
         enable_ingress: true
-      observability:
-        logging:
-          destination: "opensearch"
   required:
     - k8s_version
     - cluster_networking
     - core_services
-    - observability
   properties:
-    observability:
-      type: object
-      title: Observability
-      description: Configure logging and metrics collection and delivery for your entire cluster
-      required:
-        -  logging
-      properties:
-        logging:
-          type: object
-          title: Logging
-          description: Configure logging for your cluster
-          required:
-            - destination
-          properties:
-            destination:
-              type: string
-              title: Destination
-              description: Where to send logs
-              default: "disabled"
-              oneOf:
-              - title: "OpenSearch (in cluster)"
-                const: "opensearch"
-              - title: "Disabled"
-                const: "disabled"
-          dependencies:
-            destination:
-              oneOf:
-                - properties:
-                    destination:
-                      const: "opensearch"
-                    opensearch:
-                      type: object
-                      title: OpenSearch
-                      required:
-                        - persistence_size
-                        - retention_days
-                      properties:
-                        persistence_size:
-                          type: integer
-                          title: Persistence Size GiB
-                          description: Size of the persistent volume to use for OpenSearch
-                          minimum: 1
-                          maximum: 10000
-                          default: 10
-                        retention_days:
-                          type: integer
-                          title: Retention Days
-                          description: Number of days to retain logs and metrics in an OpenSearch Index
-                          minimum: 1
-                          maximum: 365
-                          default: 7
-                  required:
-                    - opensearch
-                - properties:
-                    destination:
-                      const: "disabled"
     k8s_version:
       type: string
       title: Kubernetes Version
@@ -177,7 +114,6 @@ ui:
       - k8s_version
       - cluster_networking
       - core_services
-      - observability
       - "*"
   core_services:
     ui:order:
