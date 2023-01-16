@@ -1,5 +1,5 @@
 module "core_services" {
-  source                      = "github.com/massdriver-cloud/terraform-modules//gcp-gke-core-services?ref=f3f8ff8"
+  source                      = "github.com/massdriver-cloud/terraform-modules//gcp-gke-core-services?ref=9bf5901"
   md_metadata                 = var.md_metadata
   kubernetes_cluster_artifact = local.kubernetes_cluster_artifact
   enable_ingress              = var.core_services.enable_ingress
