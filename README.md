@@ -73,12 +73,6 @@ Form input parameters for configuring a bundle for deployment.
     - **Items** *(string)*
   - **`enable_ingress`** *(boolean)*: Enabling this will create an nginx ingress controller in the cluster, allowing internet traffic to flow into web accessible services within the cluster. Default: `False`.
 - **`k8s_version`** *(string)*: The version of Kubernetes to run. Must be one of: `['1.24', '1.23', '1.22', '1.21', '1.20', '1.19']`. Default: `1.23`.
-- **`observability`** *(object)*: Configure logging and metrics collection and delivery for your entire cluster.
-  - **`logging`** *(object)*: Configure logging for your cluster.
-    - **`destination`** *(string)*: Where to send logs. Default: `disabled`.
-      - **One of**
-        - OpenSearch (in cluster)
-        - Disabled
 ## Examples
 
   ```json
@@ -86,11 +80,6 @@ Form input parameters for configuring a bundle for deployment.
       "__name": "Development",
       "core_services": {
           "enable_ingress": false
-      },
-      "observability": {
-          "logging": {
-              "destination": "disabled"
-          }
       }
   }
   ```
@@ -100,11 +89,6 @@ Form input parameters for configuring a bundle for deployment.
       "__name": "Production",
       "core_services": {
           "enable_ingress": true
-      },
-      "observability": {
-          "logging": {
-              "destination": "opensearch"
-          }
       }
   }
   ```
@@ -395,7 +379,7 @@ Resources created by this bundle that can be connected to other bundles.
             "https://massdriver.cloud"
             ```
 
-        - Azure Infrastructure Resource ID*object*: Minimal Azure Infrastructure Config. Cannot contain additional properties.
+        - Infrastructure Config*object*: Azure AKS Infrastructure Configuration. Cannot contain additional properties.
           - **`ari`** *(string)*: Azure Resource ID.
 
             Examples:
@@ -403,6 +387,7 @@ Resources created by this bundle that can be connected to other bundles.
             "/subscriptions/12345678-1234-1234-abcd-1234567890ab/resourceGroups/resource-group-name/providers/Microsoft.Network/virtualNetworks/network-name"
             ```
 
+          - **`oidc_issuer_url`** *(string)*
         - GCP Infrastructure GRN*object*: Minimal GCP Infrastructure Config. Cannot contain additional properties.
           - **`grn`** *(string)*: GCP Resource Name (GRN).
 
