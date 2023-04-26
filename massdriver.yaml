@@ -21,6 +21,15 @@ params:
     - __name: Production
       core_services:
         enable_ingress: true
+    - __name: Wizard
+      k8s_version: "1.24"
+      cluster_networking:
+        cluster_ipv4_cidr_block: /16
+        services_ipv4_cidr_block: /20
+        master_ipv4_cidr_block: 172.16.0.0/28
+      core_services:
+        enable_ingress: true
+        cloud_dns_managed_zones: []
   required:
     - k8s_version
     - cluster_networking
