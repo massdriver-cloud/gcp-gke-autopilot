@@ -10,6 +10,8 @@
 [![MIT License][license_shield]][license_url]
 
 
+GKE is a managed Kubernetes service in GCP that implements the full Kubernetes API, 4-way autoscaling, release channels and multi-cluster support.
+
 
 ---
 
@@ -26,22 +28,6 @@ Our bundles aren't intended to be used locally, outside of testing. Instead, our
 Bundles are the basic building blocks of infrastructure, applications, and architectures in [Massdriver][website]. Read more [here](https://docs.massdriver.cloud/concepts/bundles).
 
 ## Bundle
-
-<!-- COMPLIANCE:START -->
-
-Security and compliance scanning of our bundles is performed using [Bridgecrew](https://www.bridgecrew.cloud/). Massdriver also offers security and compliance scanning of operational infrastructure configured and deployed using the platform.
-
-| Benchmark                                                                                                                                                                                                                                                       | Description                        |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
-| [![Infrastructure Security](https://www.bridgecrew.cloud/badges/github/massdriver-cloud/gcp-gke-autopilot-cluster/general)](https://www.bridgecrew.cloud/link/badge?vcs=github&fullRepo=massdriver-cloud%2Fgcp-gke-autopilot-cluster&benchmark=INFRASTRUCTURE+SECURITY) | Infrastructure Security Compliance |
-| [![CIS GCP](https://www.bridgecrew.cloud/badges/github/massdriver-cloud/gcp-gke-autopilot-cluster/cis_gcp)](https://www.bridgecrew.cloud/link/badge?vcs=github&fullRepo=massdriver-cloud%2Fgcp-gke-autopilot-cluster&benchmark=CIS+GCP+V1.1) | Center for Internet Security, GCP Compliance |
-| [![PCI-DSS](https://www.bridgecrew.cloud/badges/github/massdriver-cloud/gcp-gke-autopilot-cluster/pci)](https://www.bridgecrew.cloud/link/badge?vcs=github&fullRepo=massdriver-cloud%2Fgcp-gke-autopilot-cluster&benchmark=PCI-DSS+V3.2) | Payment Card Industry Data Security Standards Compliance |
-| [![NIST-800-53](https://www.bridgecrew.cloud/badges/github/massdriver-cloud/gcp-gke-autopilot-cluster/nist)](https://www.bridgecrew.cloud/link/badge?vcs=github&fullRepo=massdriver-cloud%2Fgcp-gke-autopilot-cluster&benchmark=NIST-800-53) | National Institute of Standards and Technology Compliance |
-| [![ISO27001](https://www.bridgecrew.cloud/badges/github/massdriver-cloud/gcp-gke-autopilot-cluster/iso)](https://www.bridgecrew.cloud/link/badge?vcs=github&fullRepo=massdriver-cloud%2Fgcp-gke-autopilot-cluster&benchmark=ISO27001) | Information Security Management System, ISO/IEC 27001 Compliance |
-| [![SOC2](https://www.bridgecrew.cloud/badges/github/massdriver-cloud/gcp-gke-autopilot-cluster/soc2)](https://www.bridgecrew.cloud/link/badge?vcs=github&fullRepo=massdriver-cloud%2Fgcp-gke-autopilot-cluster&benchmark=SOC2)| Service Organization Control 2 Compliance |
-| [![HIPAA](https://www.bridgecrew.cloud/badges/github/massdriver-cloud/gcp-gke-autopilot-cluster/hipaa)](https://www.bridgecrew.cloud/link/badge?vcs=github&fullRepo=massdriver-cloud%2Fgcp-gke-autopilot-cluster&benchmark=HIPAA) | Health Insurance Portability and Accountability Compliance |
-
-<!-- COMPLIANCE:END -->
 
 ### Params
 
@@ -71,7 +57,6 @@ Form input parameters for configuring a bundle for deployment.
   - **`cloud_dns_managed_zones`** *(array)*: Select any Cloud DNS Managed Zones associated with this cluster to allow the cluster to automatically manage DNS records and SSL certificates. Default: `[]`.
     - **Items** *(string)*
   - **`enable_ingress`** *(boolean)*: Enabling this will create an nginx ingress controller in the cluster, allowing internet traffic to flow into web accessible services within the cluster. Default: `False`.
-- **`k8s_version`** *(string)*: The version of Kubernetes to run. Must be one of: `['1.24', '1.23', '1.22', '1.21', '1.20', '1.19']`. Default: `1.23`.
 ## Examples
 
   ```json
@@ -87,6 +72,21 @@ Form input parameters for configuring a bundle for deployment.
   {
       "__name": "Production",
       "core_services": {
+          "enable_ingress": true
+      }
+  }
+  ```
+
+  ```json
+  {
+      "__name": "Wizard",
+      "cluster_networking": {
+          "cluster_ipv4_cidr_block": "/16",
+          "master_ipv4_cidr_block": "172.16.0.0/28",
+          "services_ipv4_cidr_block": "/20"
+      },
+      "core_services": {
+          "cloud_dns_managed_zones": [],
           "enable_ingress": true
       }
   }
@@ -416,6 +416,49 @@ Resources created by this bundle that can be connected to other bundles.
             ```
 
   - **`specs`** *(object)*
+    - **`aws`** *(object)*: .
+      - **`region`** *(string)*: AWS Region to provision in.
+
+        Examples:
+        ```json
+        "us-west-2"
+        ```
+
+    - **`azure`** *(object)*: .
+      - **`region`** *(string)*: Select the Azure region you'd like to provision your resources in.
+    - **`gcp`** *(object)*: .
+      - **`project`** *(string)*
+      - **`region`** *(string)*: The GCP region to provision resources in.
+
+        Examples:
+        ```json
+        "us-east1"
+        ```
+
+        ```json
+        "us-east4"
+        ```
+
+        ```json
+        "us-west1"
+        ```
+
+        ```json
+        "us-west2"
+        ```
+
+        ```json
+        "us-west3"
+        ```
+
+        ```json
+        "us-west4"
+        ```
+
+        ```json
+        "us-central1"
+        ```
+
     - **`kubernetes`** *(object)*: Kubernetes distribution and version specifications.
       - **`cloud`** *(string)*: Must be one of: `['aws', 'gcp', 'azure']`.
       - **`distribution`** *(string)*: Must be one of: `['eks', 'gke', 'aks']`.
@@ -463,12 +506,13 @@ Please connect with us!
 <!-- markdownlint-disable -->
 
 [logo]: https://raw.githubusercontent.com/massdriver-cloud/docs/main/static/img/logo-with-logotype-horizontal-400x110.svg
-
 [docs]: https://docs.massdriver.cloud/?utm_source=github&utm_medium=readme&utm_campaign=gcp-gke-autopilot-cluster&utm_content=docs
 [website]: https://www.massdriver.cloud/?utm_source=github&utm_medium=readme&utm_campaign=gcp-gke-autopilot-cluster&utm_content=website
 [github]: https://github.com/massdriver-cloud?utm_source=github&utm_medium=readme&utm_campaign=gcp-gke-autopilot-cluster&utm_content=github
 [slack]: https://massdriverworkspace.slack.com/?utm_source=github&utm_medium=readme&utm_campaign=gcp-gke-autopilot-cluster&utm_content=slack
 [linkedin]: https://www.linkedin.com/company/massdriver/?utm_source=github&utm_medium=readme&utm_campaign=gcp-gke-autopilot-cluster&utm_content=linkedin
+
+
 
 [contributors_shield]: https://img.shields.io/github/contributors/massdriver-cloud/gcp-gke-autopilot-cluster.svg?style=for-the-badge
 [contributors_url]: https://github.com/massdriver-cloud/gcp-gke-autopilot-cluster/graphs/contributors
@@ -483,13 +527,13 @@ Please connect with us!
 [license_shield]: https://img.shields.io/github/license/massdriver-cloud/gcp-gke-autopilot-cluster.svg?style=for-the-badge
 [license_url]: https://github.com/massdriver-cloud/gcp-gke-autopilot-cluster/blob/main/LICENSE
 
+
 [email_url]: mailto:support@massdriver.cloud
 [email_shield]: https://img.shields.io/badge/email-Massdriver-black.svg?style=for-the-badge&logo=mail.ru&color=000000
 [github_url]: mailto:support@massdriver.cloud
 [github_shield]: https://img.shields.io/badge/follow-Github-black.svg?style=for-the-badge&logo=github&color=181717
 [linkedin_url]: https://linkedin.com/in/massdriver-cloud
 [linkedin_shield]: https://img.shields.io/badge/follow-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&color=0A66C2
-
 [twitter_url]: https://twitter.com/massdriver?utm_source=github&utm_medium=readme&utm_campaign=gcp-gke-autopilot-cluster&utm_content=twitter
 [twitter_shield]: https://img.shields.io/badge/follow-Twitter-black.svg?style=for-the-badge&logo=twitter&color=1DA1F2
 [discourse_url]: https://community.massdriver.cloud?utm_source=github&utm_medium=readme&utm_campaign=gcp-gke-autopilot-cluster&utm_content=discourse
